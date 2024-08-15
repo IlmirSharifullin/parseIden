@@ -4,29 +4,36 @@ import logging
 from telethon import TelegramClient, events
 from telethon.tl.types import UpdateNewChannelMessage
 
-
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
-client = TelegramClient('second_acc', 23015942, '2db4a32c2fb51ff85cd473492be52642')
+
+FIND = ['16/512', 'iPhone 11']
+FORWARD_TO = 'dedailmir'
+
+MAIN_CHANNEL_ID = 1767154113
+TEST_CHANNEL_ID = 2079574783
+
+API_ID = 23015942
+API_HASH = '2db4a32c2fb51ff85cd473492be52642'
+SESSION_NAME = 'second_acc'
+
+client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
 
 async def new_message_handler(event: events.NewMessage.Event):
     if not isinstance(event.original_update, UpdateNewChannelMessage):
         return
-    print(event)
-    if event.original_update.message.peer_id.channel_id == 2079574783:
-        logging.info('MESSAGE IN TEST')
-        print(event.original_update.message.message)
+    if event.original_update.message.peer_id.channel_id == TEST_CHANNEL_ID:
         text = event.original_update.message.message
-        if '16/512' in text:
-            await client.forward_messages('dedailmir', event.message)
+        logging.info(f'MESSAGE IN TEST - {text}')
+        if any(i in text for i in FIND):
+            await client.forward_messages(FORWARD_TO, event.message)
 
-    if event.original_update.message.peer_id.channel_id == 1767154113:
-        logging.info('MESSAGE IN IDEN')
-        print(event.original_update.message.message)
+    if event.original_update.message.peer_id.channel_id == MAIN_CHANNEL_ID:
         text = event.original_update.message.message
-        if '16/512' in text:
-            await client.forward_messages('dedailmir', event.message)
+        logging.info(f'MESSAGE IN IDEN - {text}')
+        if any(i in text for i in FIND):
+            await client.forward_messages(FORWARD_TO, event.message)
 
 
 async def main():
