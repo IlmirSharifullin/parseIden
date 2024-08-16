@@ -7,7 +7,7 @@ from telethon.tl.types import UpdateNewChannelMessage
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-FIND = ['16/512', 'iPhone 11']
+FIND = ['16/512', 'iphone 11']
 FORWARD_TO = 'dedailmir'
 
 MAIN_CHANNEL_ID = 1767154113
@@ -24,14 +24,13 @@ async def new_message_handler(event: events.NewMessage.Event):
     if not isinstance(event.original_update, UpdateNewChannelMessage):
         return
     if event.original_update.message.peer_id.channel_id == TEST_CHANNEL_ID:
-        text = event.original_update.message.message
-        logging.info(f'MESSAGE IN TEST - {text}')
+        text = event.original_update.message.message.lower()
+        logging.info(f'MESSAGE IN TEST - {text[:20]}')
         if any(i in text for i in FIND):
             await client.forward_messages(FORWARD_TO, event.message)
-
-    if event.original_update.message.peer_id.channel_id == MAIN_CHANNEL_ID:
-        text = event.original_update.message.message
-        logging.info(f'MESSAGE IN IDEN - {text}')
+    elif event.original_update.message.peer_id.channel_id == MAIN_CHANNEL_ID:
+        text = event.original_update.message.message.lower()
+        logging.info(f'MESSAGE IN IDEN - {text[:20]}')
         if any(i in text for i in FIND):
             await client.forward_messages(FORWARD_TO, event.message)
 
